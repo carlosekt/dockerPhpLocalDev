@@ -1,4 +1,4 @@
-FROM php:7.0-fpm-stretch
+FROM php:7.1-fpm-stretch
 
 RUN apt-get clean && apt-get update -yqq && apt-get install -y apt-utils \
     cron \
@@ -36,7 +36,7 @@ RUN git clone -b 'php7' --single-branch --depth 1 https://github.com/php-memcach
     echo "extension=memcached.so" > /usr/local/etc/php/conf.d/memcached.ini
 
 #Redis
-RUN pecl install redis-4.1.1 \
+RUN pecl install redis \
     && docker-php-ext-enable redis
 
 #MongoDB

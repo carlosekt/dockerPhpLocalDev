@@ -21,7 +21,7 @@ RUN apt-get clean && apt-get update && apt-get install -y \
     gnupg \
         --no-install-recommends
 
-RUN docker-php-ext-install gd intl pdo pdo_mysql sockets soap
+RUN docker-php-ext-install gd intl pdo pdo_mysql sockets soap mysqli zip curl
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/lib/x86_64-linux-gnu/ --with-jpeg-dir=/usr/lib/x86_64-linux-gnu/
 
 # Phalcon
@@ -36,6 +36,13 @@ RUN pecl install redis-3.1.0 \
 #Memcached
 RUN pecl install memcached-2.2.0 \
     && docker-php-ext-enable memcached
+
+# Install composer && global asset plugin
+ENV COMPOSER_HOME /root/.composer
+ENV PATH /root/.composer/vendor/bin:$PATH
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+    && /usr/local/bin/composer global require "fxp/composer-asset-plugin" \
+    && /usr/local/bin/composer global require "laravel/installer"
 
 #XDebug
 RUN pecl install xdebug-2.5.5 \

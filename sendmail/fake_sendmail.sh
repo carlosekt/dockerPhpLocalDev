@@ -1,6 +1,6 @@
 #!/bin/sh 
-prefix="/app/docker/data/sendmail/"
-numPath="/app/docker/data/sendmail/"
+prefix="/var/www/sendmail/emails/"
+numPath="/var/www/sendmail/emails/"
 
 if [ ! -f $numPath/num ]; then 
 echo "0" > $numPath/num 

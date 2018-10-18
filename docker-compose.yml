@@ -9,27 +9,39 @@ services:
     - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     - ./nginx/sites-enabled:/etc/nginx/sites-enabled
     - ./data/nginx/:/var/log/nginx
+    - ./sendmail/fake_sendmail.sh:/var/www/sendmail/fake_sendmail.sh
     environment:
       - TZ=${TIMEZONE}
 
-  php:
-    build: php/7.0
+  php7.2:
+    build: php/7.2
     volumes:
     - ${SITES_VOLUME}:/var/www/
-    - ./sendmail/fake_sendmail.sh:/var/www/sendmail/fake_sendmail.sh
-    - ./php/7.0/config.ini:/usr/local/etc/php/conf.d/app-config.ini
+    - ./php/7.2/config.ini:/usr/local/etc/php/conf.d/app-config.ini
 
-  #php5.6:
-  #  build: php/5.6
-  #  volumes:
-  #  - ${SITES_VOLUME}:/var/www/
-  #  - ./sendmail/fake_sendmail.sh:/var/www/sendmail/fake_sendmail.sh
-  #  - ./php/5.6/config.ini:/usr/local/etc/php/conf.d/app-config.ini
+#  php7.1:
+#    build: php/7.1
+#    volumes:
+#    - ${SITES_VOLUME}:/var/www/
+#    - ./php/7.1/config.ini:/usr/local/etc/php/conf.d/app-config.ini
+
+#  php7.0:
+#    build: php/7.0
+#    volumes:
+#    - ${SITES_VOLUME}:/var/www/
+#    - ./php/7.0/config.ini:/usr/local/etc/php/conf.d/app-config.ini
+
+#  php5.6:
+#    build: php/5.6
+#    volumes:
+#    - ${SITES_VOLUME}:/var/www/
+#    - ./php/5.6/config.ini:/usr/local/etc/php/conf.d/app-config.ini
 
   db:
     image: mariadb:10.3
     volumes:
     - ./data/db:/var/lib/mysql
+    - ./mariadb/my.cnf:/etc/mysql/conf.d/default.cnf
     ports:
     - ${MYSQL_LOCAL_PORT}:3306
     environment:
@@ -56,7 +68,7 @@ services:
 #    expose:
 #    - 11211
 #    command: memcached -m 1024m -I 4m
-#
+
   redis:
     image: redis:3-alpine
     volumes:
