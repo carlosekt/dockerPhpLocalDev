@@ -1,0 +1,65 @@
+version: '3'
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+    - 80:80
+    volumes:
+    - ${SITES_VOLUME}:/var/www/
+    - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    - ./nginx/sites-enabled:/etc/nginx/sites-enabled
+    - ./data/nginx/:/var/log/nginx
+    environment:
+      - TZ=${TIMEZONE}
+
+  php:
+    build: php/7.0
+    volumes:
+    - ${SITES_VOLUME}:/var/www/
+    - ./sendmail/fake_sendmail.sh:/var/www/sendmail/fake_sendmail.sh
+    - ./php/7.0/config.ini:/usr/local/etc/php/conf.d/app-config.ini
+
+  #php5.6:
+  #  build: php/5.6
+  #  volumes:
+  #  - ${SITES_VOLUME}:/var/www/
+  #  - ./sendmail/fake_sendmail.sh:/var/www/sendmail/fake_sendmail.sh
+  #  - ./php/5.6/config.ini:/usr/local/etc/php/conf.d/app-config.ini
+
+  db:
+    image: mariadb:10.3
+    volumes:
+    - ./data/db:/var/lib/mysql
+    ports:
+    - ${MYSQL_LOCAL_PORT}:3306
+    environment:
+    - MYSQL_USER=${MYSQL_USER}
+    - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    - TZ=${TIMEZONE}
+
+  pma:
+    image: phpmyadmin/phpmyadmin
+    volumes:
+    - /sessions
+    ports:
+    - ${PMA_LOCAL_PORT}:80
+    depends_on:
+    - db
+    environment:
+      - PMA_ARBITRARY=${PMA_ARBITRARY}
+      - PMA_HOST=${PMA_HOST}
+      - PMA_PORT=${PMA_PORT}
+
+#  memcached:
+#    image: memcached:alpine
+#    expose:
+#    - 11211
+#    command: memcached -m 1024m -I 4m
+#
+  redis:
+    image: redis:3-alpine
+    volumes:
+    - ./data/redis:/data
+    ports:
+    - 6379:6379
