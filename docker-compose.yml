@@ -41,7 +41,7 @@ services:
     image: mysql:5.7
     volumes:
     - ./data/db:/var/lib/mysql
-    - ./mariadb/my.cnf:/etc/mysql/conf.d/default.cnf
+    - ./mysql/my.cnf:/etc/mysql/conf.d/default.cnf
     ports:
     - ${MYSQL_LOCAL_PORT}:3306
     environment:
