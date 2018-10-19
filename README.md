@@ -4,7 +4,7 @@ Docker PHP development environment.
 ##Software Stack
 - Nginx<br>
 - Php 7.2 (optional: 5.6, 7.0, 7.1)<br>
-- MariaDb 10<br>
+- MySQL 5.7<br>
 - Redis<br>
 - Php extensions: Phalcon 3, Memcached, Redis, MongoDB, Imagick, Opcache, Xdebug
 - Composer, Artisan, Asset-Plugin
