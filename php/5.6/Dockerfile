@@ -48,6 +48,21 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN pecl install xdebug-2.5.5 \
     && docker-php-ext-enable xdebug
 
+# Config
+RUN echo "error_log = /var/log/php-fpm/php-fpm.log \nlog_errors = On \nerror_reporting = E_ERROR | E_PARSE \ndisplay_errors = On" >> /usr/local/etc/php/conf.d/log.ini \
+    && sed -i 's/;catch_workers_output.*/catch_workers_output = yes/g' /usr/local/etc/php-fpm.d/www.conf \
+    && sed -i 's/;php_admin_value\[error_log\].*/php_admin_value\[error_log\] = \/var\/log\/php-fpm\/php-fpm.log/g' /usr/local/etc/php-fpm.d/www.conf \
+    && sed -i 's/;php_admin_flag\[log_errors\].*/php_admin_flag\[log_errors\] = on/g' /usr/local/etc/php-fpm.d/www.conf \
+    && sed -i 's/pm.max_children = .*/pm.max_children = 200/g' /usr/local/etc/php-fpm.d/www.conf \
+    && sed -i 's/pm.start_servers = .*/pm.start_servers = 10/g' /usr/local/etc/php-fpm.d/www.conf \
+    && sed -i 's/pm.min_spare_servers = .*/pm.min_spare_servers = 10/g' /usr/local/etc/php-fpm.d/www.conf \
+    && sed -i 's/pm.max_spare_servers = .*/pm.max_spare_servers = 100/g' /usr/local/etc/php-fpm.d/www.conf \
+    && sed -i 's/pm = .*/pm = dynamic/g' /usr/local/etc/php-fpm.d/www.conf
+
+# Logs
+RUN mkdir -p /var/log/php-fpm \
+    && chown -R www-data:www-data /var/log/php-fpm
+
 RUN usermod -u 1000 www-data
 
 EXPOSE 9000

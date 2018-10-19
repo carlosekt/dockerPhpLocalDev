@@ -8,7 +8,7 @@ services:
     - ${SITES_VOLUME}:/var/www/
     - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     - ./nginx/sites-enabled:/etc/nginx/sites-enabled
-    - ./data/nginx/:/var/log/nginx
+    - ./data/logs/nginx:/var/log/nginx
     - ./sendmail/fake_sendmail.sh:/var/www/sendmail/fake_sendmail.sh
     environment:
       - TZ=${TIMEZONE}
@@ -17,6 +17,7 @@ services:
     build: php/7.2
     volumes:
     - ${SITES_VOLUME}:/var/www/
+    - ./data/logs/php:/var/log/php-fpm
     - ./php/7.2/config.ini:/usr/local/etc/php/conf.d/app-config.ini
 
 #  php7.1:
@@ -40,6 +41,7 @@ services:
   db:
     image: mysql:5.7
     volumes:
+    - ./data/logs/db:/var/log/mysql
     - ./data/db:/var/lib/mysql
     - ./mysql/my.cnf:/etc/mysql/conf.d/default.cnf
     ports:
