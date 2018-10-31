@@ -5,7 +5,7 @@ RUN apt-get clean && apt-get update -yqq && apt-get install -y apt-utils \
     sendmail \
     libmcrypt-dev \
     libicu-dev \
-    libfreetype6-dev libjpeg62-turbo-dev \
+    libfreetype6-dev libjpeg62-turbo-dev libpng-dev \
     libxml2-dev \
     libssl-dev \
     mysql-client \
@@ -20,6 +20,7 @@ RUN apt-get clean && apt-get update -yqq && apt-get install -y apt-utils \
     zlib1g-dev \
     iproute2 \
     gnupg \
+    osslsigncode \
         --no-install-recommends
 
 RUN docker-php-ext-install gd intl pdo pdo_mysql sockets soap mysqli zip curl
