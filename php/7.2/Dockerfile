@@ -21,6 +21,8 @@ RUN apt-get clean && apt-get update -yqq && apt-get install -y apt-utils \
     iproute2 \
     gnupg \
     osslsigncode \
+    wget \
+    nano \
         --no-install-recommends
 
 RUN docker-php-ext-install gd intl pdo pdo_mysql sockets soap mysqli zip curl
