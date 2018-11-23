@@ -25,8 +25,8 @@ RUN apt-get clean && apt-get update -yqq && apt-get install -y apt-utils \
     nano \
         --no-install-recommends
 
+RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
 RUN docker-php-ext-install gd intl pdo pdo_mysql sockets soap mysqli zip curl
-RUN docker-php-ext-configure gd --with-freetype-dir=/usr/lib/x86_64-linux-gnu/ --with-jpeg-dir=/usr/lib/x86_64-linux-gnu/
 
 # Phalcon
 RUN git clone -b 'v3.4.1' --single-branch --depth 1 https://github.com/phalcon/cphalcon /usr/local/src/cphalcon ;\
