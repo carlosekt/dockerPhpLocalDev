@@ -67,9 +67,6 @@ RUN pecl install -o -f xdebug \
     && docker-php-ext-enable xdebug
 COPY ./xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
-# Fake sendmail
-#RUN echo "sendmail_path = /var/www/sendmail/fake_sendmail.sh" > /usr/local/etc/php/conf.d/fake_sendmail.ini
-
 # Config
 RUN echo "error_log = /var/log/php-fpm/php-fpm.log \nlog_errors = On \nerror_reporting = E_ERROR | E_PARSE \ndisplay_errors = On" >> /usr/local/etc/php/conf.d/log.ini \
     && sed -i 's/;catch_workers_output.*/catch_workers_output = yes/g' /usr/local/etc/php-fpm.d/www.conf \

@@ -9,7 +9,6 @@ services:
     - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     - ./nginx/sites-enabled:/etc/nginx/sites-enabled
     - ./data/logs/nginx:/var/log/nginx
-    - ./sendmail/fake_sendmail.sh:/var/www/sendmail/fake_sendmail.sh
     environment:
       - TZ=${TIMEZONE}
 
