@@ -79,6 +79,9 @@ services:
 
   mailhog:
     image: mailhog/mailhog
+    command: ["-storage=maildir", "-maildir-path=/maildir"]
+    volumes:
+        - ./data/mailhog/volume:/maildir
     ports:
       - "1025:1025"
       - "8025:8025"
