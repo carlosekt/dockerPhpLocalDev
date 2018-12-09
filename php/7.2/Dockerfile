@@ -29,7 +29,7 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
 RUN docker-php-ext-install gd intl pdo pdo_mysql sockets soap mysqli zip curl
 
 # Phalcon
-RUN git clone -b 'v3.4.1' --single-branch --depth 1 https://github.com/phalcon/cphalcon /usr/local/src/cphalcon ;\
+RUN git clone -b 'v3.4.2' --single-branch --depth 1 https://github.com/phalcon/cphalcon /usr/local/src/cphalcon ;\
     cd /usr/local/src/cphalcon/build && ./install ;\
     echo "extension=phalcon.so" > /usr/local/etc/php/conf.d/phalcon.ini
 
@@ -58,6 +58,7 @@ COPY ./opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 ENV COMPOSER_HOME /root/.composer
 ENV PATH /root/.composer/vendor/bin:$PATH
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+    && /usr/local/bin/composer global require "hirak/prestissimo" \
     && /usr/local/bin/composer global require "fxp/composer-asset-plugin" \
     && /usr/local/bin/composer global require "laravel/installer"
 
@@ -67,7 +68,7 @@ RUN pecl install -o -f xdebug \
 COPY ./xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 # Fake sendmail
-RUN echo "sendmail_path = /var/www/sendmail/fake_sendmail.sh" > /usr/local/etc/php/conf.d/fake_sendmail.ini
+#RUN echo "sendmail_path = /var/www/sendmail/fake_sendmail.sh" > /usr/local/etc/php/conf.d/fake_sendmail.ini
 
 # Config
 RUN echo "error_log = /var/log/php-fpm/php-fpm.log \nlog_errors = On \nerror_reporting = E_ERROR | E_PARSE \ndisplay_errors = On" >> /usr/local/etc/php/conf.d/log.ini \
@@ -79,6 +80,13 @@ RUN echo "error_log = /var/log/php-fpm/php-fpm.log \nlog_errors = On \nerror_rep
     && sed -i 's/pm.min_spare_servers = .*/pm.min_spare_servers = 10/g' /usr/local/etc/php-fpm.d/www.conf \
     && sed -i 's/pm.max_spare_servers = .*/pm.max_spare_servers = 100/g' /usr/local/etc/php-fpm.d/www.conf \
     && sed -i 's/pm = .*/pm = dynamic/g' /usr/local/etc/php-fpm.d/www.conf
+
+#Fake sendmail
+RUN curl -Lsf 'https://storage.googleapis.com/golang/go1.11.2.linux-amd64.tar.gz' | tar -C '/usr/local' -xvzf -
+ENV PATH /usr/local/go/bin:$PATH
+RUN go get github.com/mailhog/mhsendmail
+RUN cp /root/go/bin/mhsendmail /usr/bin/mhsendmail
+RUN echo 'sendmail_path = /usr/bin/mhsendmail --smtp-addr mailhog:1025' > /usr/local/etc/php/conf.d/fake_sendmail.ini
 
 # Logs
 RUN mkdir -p /var/log/php-fpm \

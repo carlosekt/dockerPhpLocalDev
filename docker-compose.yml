@@ -71,9 +71,15 @@ services:
 #    - 11211
 #    command: memcached -m 1024m -I 4m
 
-  redis:
-    image: redis:3-alpine
-    volumes:
-    - ./data/redis:/data
+#  redis:
+#    image: redis:3-alpine
+#    volumes:
+#    - ./data/redis:/data
+#    ports:
+#    - 6379:6379
+
+  mailhog:
+    image: mailhog/mailhog
     ports:
-    - 6379:6379
+      - "1025:1025"
+      - "8025:8025"
