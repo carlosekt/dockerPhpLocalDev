@@ -1,4 +1,4 @@
-FROM php:7.2-fpm-stretch
+FROM php:7.3-fpm-stretch
 
 RUN apt-get clean && apt-get update -yqq && apt-get install -y apt-utils \
     cron \

@@ -1,87 +1,70 @@
 version: '3'
 services:
   nginx:
-    image: nginx:alpine
+    build: nginx
     ports:
-    - 80:80
+      - 80:80
     volumes:
-    - ${SITES_VOLUME}:/var/www/
-    - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-    - ./nginx/sites-enabled:/etc/nginx/sites-enabled
-    - ./data/logs/nginx:/var/log/nginx
+      - ${SITES_VOLUME}:/var/www/
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/sites-enabled:/etc/nginx/sites-enabled
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./data/logs/nginx:/var/log/nginx
     environment:
       - TZ=${TIMEZONE}
 
   php7.2:
     build: php/7.2
     volumes:
-    - ${SITES_VOLUME}:/var/www/
-    - ./data/logs/php:/var/log/php-fpm
-    - ./php/7.2/config.ini:/usr/local/etc/php/conf.d/app-config.ini
-
-#  php7.1:
-#    build: php/7.1
-#    volumes:
-#    - ${SITES_VOLUME}:/var/www/
-#    - ./php/7.1/config.ini:/usr/local/etc/php/conf.d/app-config.ini
-
-#  php7.0:
-#    build: php/7.0
-#    volumes:
-#    - ${SITES_VOLUME}:/var/www/
-#    - ./php/7.0/config.ini:/usr/local/etc/php/conf.d/app-config.ini
-
-#  php5.6:
-#    build: php/5.6
-#    volumes:
-#    - ${SITES_VOLUME}:/var/www/
-#    - ./php/5.6/config.ini:/usr/local/etc/php/conf.d/app-config.ini
+      - ${SITES_VOLUME}:/var/www/
+      - ./data/logs/php:/var/log/php-fpm
+      - ./php/7.2/config.ini:/usr/local/etc/php/conf.d/app-config.ini
 
   db:
     image: mysql:5.7
     volumes:
-    - ./data/logs/db:/var/log/mysql
-    - ./data/db:/var/lib/mysql
-    - ./mysql/my.cnf:/etc/mysql/conf.d/default.cnf
+      - ./data/logs/db:/var/log/mysql
+      - ./data/db:/var/lib/mysql
+      - ./mysql/my.cnf:/etc/mysql/conf.d/default.cnf
     ports:
-    - ${MYSQL_LOCAL_PORT}:3306
+      - ${MYSQL_LOCAL_PORT}:3306
     environment:
-    - MYSQL_USER=${MYSQL_USER}
-    - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-    - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-    - TZ=${TIMEZONE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - TZ=${TIMEZONE}
 
   pma:
     image: phpmyadmin/phpmyadmin
     volumes:
-    - /sessions
+      - /sessions
     ports:
-    - ${PMA_LOCAL_PORT}:80
+      - ${PMA_LOCAL_PORT}:80
     depends_on:
-    - db
+      - db
     environment:
       - PMA_ARBITRARY=${PMA_ARBITRARY}
       - PMA_HOST=${PMA_HOST}
       - PMA_PORT=${PMA_PORT}
 
-#  memcached:
-#    image: memcached:alpine
-#    expose:
-#    - 11211
-#    command: memcached -m 1024m -I 4m
+  #  memcached:
+  #    image: memcached:alpine
+  #    expose:
+  #    - 11211
+  #    command: memcached -m 1024m -I 4m
 
-#  redis:
-#    image: redis:3-alpine
-#    volumes:
-#    - ./data/redis:/data
-#    ports:
-#    - 6379:6379
+  redis:
+    image: redis:3-alpine
+    volumes:
+    - ./data/redis:/data
+    ports:
+    - 6379:6379
 
   mailhog:
     image: mailhog/mailhog
     command: ["-storage=maildir", "-maildir-path=/maildir"]
     volumes:
-        - ./data/mailhog/volume:/maildir
+      - ./data/mailhog/volume:/maildir
     ports:
       - "1025:1025"
       - "8025:8025"
