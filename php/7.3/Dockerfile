@@ -34,9 +34,8 @@ RUN git clone -b 'v3.4.2' --single-branch --depth 1 https://github.com/phalcon/c
     echo "extension=phalcon.so" > /usr/local/etc/php/conf.d/phalcon.ini
 
 # Memcached
-RUN git clone -b 'php7' --single-branch --depth 1 https://github.com/php-memcached-dev/php-memcached /usr/local/src/memcached ;\
-    cd /usr/local/src/memcached && phpize && ./configure --disable-memcached-sasl && make && make install ;\
-    echo "extension=memcached.so" > /usr/local/etc/php/conf.d/memcached.ini
+RUN pecl install memcached \
+    && docker-php-ext-enable memcached
 
 #Redis
 RUN pecl install redis \
@@ -64,7 +63,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
     && /usr/local/bin/composer global require "laravel/installer"
 
 # Xdebug
-RUN pecl install -o -f xdebug \
+RUN pecl install xdebug-2.7.0RC1 \
     && docker-php-ext-enable xdebug
 COPY ./xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
