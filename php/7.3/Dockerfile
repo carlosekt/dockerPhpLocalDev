@@ -29,7 +29,7 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
 RUN docker-php-ext-install gd intl pdo pdo_mysql sockets soap mysqli zip curl
 
 # Phalcon
-RUN git clone -b 'v3.4.2' --single-branch --depth 1 https://github.com/phalcon/cphalcon /usr/local/src/cphalcon ;\
+RUN git clone -b 'v3.4.3' --single-branch --depth 1 https://github.com/phalcon/cphalcon /usr/local/src/cphalcon ;\
     cd /usr/local/src/cphalcon/build && ./install ;\
     echo "extension=phalcon.so" > /usr/local/etc/php/conf.d/phalcon.ini
 
@@ -63,7 +63,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
     && /usr/local/bin/composer global require "laravel/installer"
 
 # Xdebug
-RUN pecl install xdebug-2.7.0RC1 \
+RUN pecl install xdebug-2.7.1 \
     && docker-php-ext-enable xdebug
 COPY ./xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
