@@ -47,6 +47,17 @@ services:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - TZ=${TIMEZONE}
 
+  pgdb:
+    image: postgres:alpine
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    ports:
+      - ${POSTGRES_PORT}:5432
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - TZ=${TIMEZONE}
+
   pma:
     image: phpmyadmin/phpmyadmin
     volumes:
@@ -60,28 +71,57 @@ services:
       - PMA_HOST=${PMA_HOST}
       - PMA_PORT=${PMA_PORT}
 
-  #  memcached:
-  #    image: memcached:alpine
-  #    expose:
-  #    - 11211
-  #    command: memcached -m 1024m -I 4m
+  memcached:
+    image: memcached:alpine
+    expose:
+    - 11211
+    command: memcached -m 1024m -I 4m
 
-#  redis:
-#    image: redis:3-alpine
-#    volumes:
-#    - ./data/redis:/data
-#    ports:
-#    - 6379:6379
-#
-#  php-redis-admin:
-#    image: faktiva/php-redis-admin
-#    container_name: pra
-#    environment:
-#      - PHPREDMIN_DATABASE_REDIS_0_HOST=redis
-#    ports:
-#      - "89:80"
-#    depends_on:
-#      - redis
+  redis:
+    image: redis:3-alpine
+    volumes:
+    - ./data/redis:/data
+    ports:
+    - 6379:6379
+
+  php-redis-admin:
+    image: faktiva/php-redis-admin
+    container_name: pra
+    environment:
+      - PHPREDMIN_DATABASE_REDIS_0_HOST=redis
+    ports:
+      - 89:80
+    depends_on:
+      - redis
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    volumes:
+      - ./data/mongo/db:/data/db
+      - ./data/mongo/mongo_config:/data/configdb
+
+  rabbitmq:
+    image: rabbitmq:alpine
+    ports:
+      - ${RABBITMQ_NODE_HOST_PORT}:5672
+      - ${RABBITMQ_MANAGEMENT_HTTP_HOST_PORT}:15672
+      - ${RABBITMQ_MANAGEMENT_HTTPS_HOST_PORT}:15671
+    privileged: true
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+    hostname: laradock-rabbitmq
+    volumes:
+      - ./data/rabbitmq:/var/lib/rabbitmq
+
+  grafana:
+    image: grafana/grafana:latest
+    volumes:
+      - ./data/grafana:/var/lib/grafana
+    ports:
+      - 3000:3000
 
   mailhog:
     image: mailhog/mailhog
